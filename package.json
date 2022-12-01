@@ -1,0 +1,18 @@
+{
+  "name": "2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "day": "node --no-warnings ./index.js",
+    "test": "vitest run",
+    "test:all": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vitest": "^0.25.3"
+  }
+}
