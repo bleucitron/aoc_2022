@@ -41,5 +41,7 @@ npm run day X # runs day X
 npm run day X replace # runs day X overwriting input
 
 npm run test day1 # runs tests for day 1 with example input
-npm run test:all # runs all tests with example inputs
+npm run test:watch day1 # runs and watches tests for day 1 with example input
+
+npm run test # runs tests for all days with example input
 ```

@@ -7,7 +7,7 @@
   "scripts": {
     "day": "node --no-warnings ./index.js",
     "test": "vitest run",
-    "test:all": "vitest"
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "",
