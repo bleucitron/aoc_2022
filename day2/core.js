@@ -1,5 +1,5 @@
 export default function core(input) {
-  return input.split('\n').filter(x => x);
+  return input.trim().split('\n');
 }
 
 export function points1(letter) {
