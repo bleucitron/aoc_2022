@@ -1,15 +1,9 @@
-import parse from './core.js';
+import solve from './core.js';
 
 export function part1(input) {
-  const data = parse(input);
-  console.log('data', data);
-
-  return data.length;
+  return solve(input, 4);
 }
 
 export function part2(input) {
-  const data = parse(input);
-  console.log('data', data);
-
-  return data.length;
+  return solve(input, 14);
 }
