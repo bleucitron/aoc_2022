@@ -9,12 +9,12 @@ import { part1, part2 } from './index.js';
 
 const input = readFileSync(`${__dirname}/test.txt`, 'utf8');
 
-describe('Day 4', () => {
+describe('Day 7', () => {
   it('Part 1', () => {
-    expect(part1(input)).toBe(7);
+    expect(part1(input)).toBe(95437);
   });
 
-  it.skip('Part 2', () => {
-    expect(part2(input)).toBe(19);
+  it('Part 2', () => {
+    expect(part2(input)).toBe(24933642);
   });
 });

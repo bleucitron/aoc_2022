@@ -13,7 +13,7 @@ const input3 = readFileSync(`${__dirname}/test3.txt`, 'utf8');
 const input4 = readFileSync(`${__dirname}/test4.txt`, 'utf8');
 const input5 = readFileSync(`${__dirname}/test5.txt`, 'utf8');
 
-describe('Day 4', () => {
+describe('Day 6', () => {
   it('Part 1', () => {
     expect(part1(input)).toBe(7);
     expect(part1(input2)).toBe(5);

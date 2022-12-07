@@ -1,18 +1,65 @@
-export default function solve(data, length) {
-  let position;
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { writeFileSync } from 'fs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export default function parse(input, writeTree = false) {
+  const data = input.trim().split('\n');
+
+  const tree = {};
+  let currentPath = [];
+  let currentDir = tree;
+  const sizes = {};
 
   for (let i = 0; i < data.length; i++) {
-    const letters = data.slice(i, i + length).split('');
+    const line = data[i];
+    if (line.startsWith('$ cd')) {
+      const dir = line.split(' ')[2];
 
-    const duplicates = letters.map((letter, j) =>
-      letters.filter((_, k) => k !== j).includes(letter),
-    );
+      if (dir === '/') {
+        currentPath = ['/'];
+      } else if (dir === '..') {
+        const [root, ...folders] = currentPath.splice(
+          0,
+          currentPath.length - 1,
+        );
 
-    if (!duplicates.includes(true)) {
-      position = i + length;
-      break;
+        currentDir = folders.reduce((acc, cur) => acc[cur], tree);
+        currentPath = [root, ...folders];
+      } else {
+        currentDir[dir] = {};
+        currentDir = currentDir[dir];
+        currentPath = [...currentPath, dir];
+      }
+    } else if (line.startsWith('$ ls')) {
+    } else if (!line.startsWith('$')) {
+      const [type, name] = line.split(' ');
+      currentDir[name] = type === 'dir' ? {} : parseInt(type);
+
+      if (type !== 'dir') {
+        const size = parseInt(type);
+
+        currentPath
+          .reduce((acc, path) => {
+            return acc.length === 0
+              ? [path]
+              : [...acc, acc.at(-1) + path + '/'];
+          }, [])
+          .forEach(dir => {
+            if (sizes[dir] == null) {
+              sizes[dir] = size;
+            } else {
+              sizes[dir] += size;
+            }
+          });
+      }
     }
   }
 
-  return position;
+  if (writeTree) {
+    writeFileSync(`${__dirname}/tree.json`, JSON.stringify(tree));
+  }
+
+  return sizes;
 }
