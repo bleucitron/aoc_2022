@@ -9,12 +9,21 @@ import { part1, part2 } from './index.js';
 
 const input = readFileSync(`${__dirname}/test.txt`, 'utf8');
 
+const screen = `
+##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######.....
+`;
+
 describe('Day 10', () => {
   it('Part 1', () => {
-    expect(part1(input)).toBe(13);
+    expect(part1(input)).toBe(13140);
   });
 
   it('Part 2', () => {
-    expect(part2(input)).toBe(36);
+    expect(part2(input)).toBe(screen);
   });
 });
