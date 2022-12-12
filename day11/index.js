@@ -1,13 +1,14 @@
-import parse from './core.js';
+import parse, { roll } from './core.js';
 
 export function part1(input) {
-  const data = parse(input);
+  const monkeys = parse(input);
 
-  return data.length;
+  return roll(monkeys, 20, x => Math.floor(x / 3));
 }
 
 export function part2(input) {
-  const data = parse(input);
+  const monkeys = parse(input);
+  const factors = monkeys.reduce((acc, { test }) => acc * test, 1);
 
-  return data.length;
+  return roll(monkeys, 10000, x => x % factors);
 }

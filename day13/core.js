@@ -31,6 +31,7 @@ export default function parse(input) {
 }
 
 export function roll(monkeys, nbRounds, modifier = x => x) {
+  const factors = monkeys.reduce((acc, { test }) => acc * test, 1);
   const inspections = monkeys.map(() => 0);
 
   for (let round = 1; round <= nbRounds; round++) {
@@ -39,7 +40,7 @@ export function roll(monkeys, nbRounds, modifier = x => x) {
         const value = modifier(inspect(item));
         inspections[i] = inspections[i] + 1;
         const next = value % test === 0 ? ifTrue : ifFalse;
-        monkeys[next].items.push(value);
+        monkeys[next].items.push(value % factors);
       });
       monkeys[i].items = [];
     });
