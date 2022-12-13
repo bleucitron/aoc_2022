@@ -1,4 +1,4 @@
-import parse from './core.js';
+import { parse } from './core.js';
 
 const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 

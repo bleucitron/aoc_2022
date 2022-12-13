@@ -1,4 +1,4 @@
-export default function parse(input) {
+export function parse(input) {
   const data = input.split('\n').filter(x => x);
 
   const moveString = data.filter(l => l.startsWith('move'));

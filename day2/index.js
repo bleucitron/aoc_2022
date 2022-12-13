@@ -1,7 +1,7 @@
-import core, { points1, outcome1, points2, outcome2 } from './core.js';
+import { parse, points1, outcome1, points2, outcome2 } from './core.js';
 
 export function part1(input) {
-  const data = core(input);
+  const data = parse(input);
 
   const rounds = data.map(round => {
     const [opponent, mine] = round.split(' ');
@@ -16,7 +16,7 @@ export function part1(input) {
 }
 
 export function part2(input) {
-  const data = core(input);
+  const data = parse(input);
 
   const rounds = data.map(round => {
     const [opponent, mine] = round.split(' ');

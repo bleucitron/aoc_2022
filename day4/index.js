@@ -1,4 +1,4 @@
-import parse, { getLimits } from './core.js';
+import { parse, getLimits } from './core.js';
 
 export function part1(input) {
   const data = parse(input);

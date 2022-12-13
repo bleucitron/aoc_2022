@@ -1,7 +1,7 @@
-import parse from './core.js';
+import { parse } from './core.js';
 
 export function part1(input) {
-  const data = parse(input, true);
+  const data = parse(input);
 
   return Object.values(data)
     .filter(value => value <= 100000)

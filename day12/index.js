@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs';
-import parse, { trail, logMap } from './core.js';
+import { parse, trail, logMap } from './core.js';
 
 export function part1(input) {
   const grid = parse(input);

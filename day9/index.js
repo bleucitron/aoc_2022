@@ -1,4 +1,4 @@
-import parse, { logMap, logVisited } from './core.js';
+import { parse, logMap, logVisited } from './core.js';
 
 function makePoint(x, y) {
   return `${x},${y}`;

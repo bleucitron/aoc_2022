@@ -1,4 +1,4 @@
-import parse, { moveCrates } from './core.js';
+import { parse, moveCrates } from './core.js';
 
 export function part1(input) {
   const { stacks, moves } = parse(input);

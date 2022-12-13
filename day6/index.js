@@ -1,4 +1,4 @@
-import solve from './core.js';
+import { solve } from './core.js';
 
 export function part1(input) {
   return solve(input, 4);

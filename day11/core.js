@@ -1,4 +1,4 @@
-export default function parse(input) {
+export function parse(input) {
   const data = input.trim().split('\n\n');
 
   const output = data.map(block => {

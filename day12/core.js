@@ -1,9 +1,7 @@
-export default function parse(input) {
+export function parse(input) {
   const data = input.trim().split('\n');
 
   const grid = data.map(line => line.split(''));
-
-  // console.log('Grid', grid);
 
   return grid;
 }

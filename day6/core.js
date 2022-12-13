@@ -1,4 +1,4 @@
-export default function solve(data, length) {
+export function solve(data, length) {
   let position;
 
   for (let i = 0; i < data.length; i++) {

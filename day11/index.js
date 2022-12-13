@@ -1,4 +1,4 @@
-import parse, { roll } from './core.js';
+import { parse, roll } from './core.js';
 
 export function part1(input) {
   const monkeys = parse(input);

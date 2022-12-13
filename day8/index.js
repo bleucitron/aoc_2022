@@ -1,4 +1,4 @@
-import parse from './core.js';
+import { parse } from './core.js';
 
 export function part1(input) {
   const data = parse(input);

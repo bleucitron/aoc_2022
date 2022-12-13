@@ -4,7 +4,7 @@ import { writeFileSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export default function parse(input, writeTree = false) {
+export function parse(input, writeTree = false) {
   const data = input.trim().split('\n');
 
   const tree = {};

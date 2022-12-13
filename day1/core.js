@@ -1,4 +1,4 @@
-export default function core(input) {
+export function parse(input) {
   const data = input.trim().split('\n\n');
 
   const loads = data.map(elf => {
