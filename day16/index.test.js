@@ -11,10 +11,10 @@ const input = readFileSync(`${__dirname}/test.txt`, 'utf8');
 
 describe('Day 16', () => {
   it('Part 1', () => {
-    expect(part1(input)).toBe(26);
+    expect(part1(input)).toBe(1651);
   });
 
-  it('Part 2', () => {
+  it.skip('Part 2', () => {
     expect(part2(input)).toBe(56000011);
   });
 });
