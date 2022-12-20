@@ -9,7 +9,7 @@ import { part1, part2 } from './index.js';
 
 const input = readFileSync(`${__dirname}/test.txt`, 'utf8');
 
-describe('Day 20', () => {
+describe('Day 21', () => {
   it('Part 1', () => {
     expect(part1(input)).toBe(3);
   });

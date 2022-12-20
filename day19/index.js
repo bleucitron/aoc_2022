@@ -11,7 +11,7 @@ function run({
   if (minute === 1) {
     console.log('Starting run');
   }
-  const { ore, clay, obsidian } = quantities;
+  const { ore, clay, obsidian, geode } = quantities;
 
   Object.keys(quantities).forEach(type => {
     quantities[type] += bots[type];
@@ -35,6 +35,12 @@ function run({
 
       return true;
     })
+    .filter(({ name }) => {
+      if (name === 'ore' || name === 'clay') {
+        return bots.obsidian < 2;
+      }
+      return true;
+    })
     .filter(({ cost }) => {
       return (
         ore >= cost.ore &&
@@ -43,26 +49,36 @@ function run({
       );
     });
 
-  const options = factories.map(({ name, cost }) => {
-    const newQuantities = { ...quantities };
-    const newBots = { ...bots };
-    Object.entries(cost).forEach(([type, value]) => {
-      newQuantities[type] -= value;
+  const wait = { name: 'wait', quantities, bots };
+
+  let options = [];
+
+  if (factories.length === 0) {
+    options = [wait];
+  } else {
+    options = factories.map(({ name, cost }) => {
+      const newQuantities = { ...quantities };
+      const newBots = { ...bots };
+      Object.entries(cost).forEach(([type, value]) => {
+        newQuantities[type] -= value;
+      });
+
+      newBots[name] += 1;
+
+      return { name, quantities: newQuantities, bots: newBots };
     });
-
-    newBots[name] += 1;
-
-    return { name, quantities: newQuantities, bots: newBots };
-  });
-
-  const skip = { name: 'skip', quantities, bots };
-  if (
-    bots.ore < maxNeeded.ore &&
-    bots.clay < maxNeeded.clay &&
-    bots.obsidian < maxNeeded.obsidian
-  ) {
-    options.push(skip);
+    const skip = { name: 'skip', quantities, bots };
+    if (
+      bots.ore < maxNeeded.ore &&
+      bots.clay < maxNeeded.clay
+      // bots.obsidian < 2
+    ) {
+      options.push(skip);
+    }
   }
+
+  // wait-wait-clay-wait-clay-wait-clay-wait-clay-wait-skip-obsidian-wait-skip-obsidian-wait-wait-geode-wait-obsidian-wait-geode-wait-geode'
+  // wait-wait-clay-wait-clay-wait-clay-wait-skip-skip-obsidian-clay-wait-skip-obsidian-wait-wait-geode-wait-skip-geode-obsidian-wait-geode
 
   const results =
     minute < during
@@ -75,8 +91,8 @@ function run({
             quantities,
             bots,
           });
-          return b;
-          // return { ...b, name: `${name}-${b.name}` };
+          // return b;
+          return { ...b, name: `${name} ${b.name}` };
         })
       : options;
 
@@ -89,20 +105,21 @@ function run({
 export function part1(input) {
   const data = parse(input);
 
-  const blueprints = data[1];
-  const maxNeeded = {};
-  blueprints.forEach(({ cost }) => {
-    Object.entries(cost).forEach(([key, value]) => {
-      maxNeeded[key] = Math.max(maxNeeded[key] ?? 0, value ?? 0);
-    });
-  });
+  // const blueprints = data[1];
+  // const maxNeeded = {};
+  // blueprints.forEach(({ cost }) => {
+  //   Object.entries(cost).forEach(([key, value]) => {
+  //     maxNeeded[key] = Math.max(maxNeeded[key] ?? 0, value ?? 0);
+  //   });
+  // });
 
-  // const result = run({ during: 24, blueprints, maxNeeded });
+  // const result = run({ during: 32, blueprints, maxNeeded });
   // console.log('Result', result);
 
   // return 1;
 
   const results = data.map(blueprints => {
+    console.log('Blueprints', blueprints);
     const maxNeeded = {};
     blueprints.forEach(({ cost }) => {
       Object.entries(cost).forEach(([key, value]) => {
