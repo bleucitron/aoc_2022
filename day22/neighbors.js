@@ -30,14 +30,14 @@ export function makeNeighbors(cube, size = 50) {
       [UP]: {
         id: 10,
         facing: RIGHT,
-        transpose: ([x]) => [1, size - x + 1],
+        transpose: ([x]) => [1, x],
       },
     });
     neighborsById.set(3, {
       [RIGHT]: {
         id: 8,
         facing: LEFT,
-        transpose: ([_, y]) => [1, size - y + 1],
+        transpose: ([_, y]) => [size, size - y + 1],
       },
       [DOWN]: {
         id: 5,
@@ -64,7 +64,7 @@ export function makeNeighbors(cube, size = 50) {
       [DOWN]: {
         id: 8,
         facing: DOWN,
-        transpose: ([_, y]) => [1, size - y + 1],
+        transpose: ([x]) => [x, 1],
       },
       [LEFT]: {
         id: 7,

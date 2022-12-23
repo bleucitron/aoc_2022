@@ -5,7 +5,6 @@ import {
   UP,
   DOWN,
   stepByDirection,
-  directionByIndex,
   directions,
   makePosition,
   parsePosition,
@@ -70,11 +69,12 @@ export function part1(input) {
 
 export function part2(input) {
   const { carte, instructions } = parse(input);
-  const steps = parseSteps(instructions);
-  const { cube, neighborsById } = parseCube(carte, { size: 50 });
+  const test = carte.length < 1000;
 
-  // let cubeId = 3;
-  let cubeId = 2;
+  const steps = parseSteps(instructions);
+  const { cube, neighborsById } = parseCube(carte, { size: test ? 4 : 50 });
+
+  let cubeId = test ? 3 : 2;
 
   let { map } = cube.get(cubeId);
 
@@ -83,11 +83,7 @@ export function part2(input) {
   let facing = RIGHT;
   let coords = keys[0];
 
-  // let count = 0;
-  // steps.forEach((step, _i) => {
   for (let _i = 0; _i < steps.length; _i++) {
-    // count++;
-    // if (count > 30) break;
     const step = steps[_i];
 
     if (typeof step !== 'number') {
@@ -97,15 +93,12 @@ export function part2(input) {
         directions.length;
       facing = directions[newIndex];
     } else {
-      console.log('MOVE', directionByIndex[facing], step);
       for (let i = 1; i <= step; i++) {
-        // console.log('i', i);
         const delta = stepByDirection[facing];
-        // console.log(coords);
+
         let newCoords = move(coords, delta);
         let newPosition = makePosition(newCoords);
         let pt = map.get(newPosition);
-        // console.log({ newPosition, pt });
 
         let newFacing = facing;
         let newCubeId = cubeId;
@@ -119,13 +112,8 @@ export function part2(input) {
           newFacing = neighbor.facing;
           newCubeId = neighbor.id;
           newMap = cube.get(newCubeId).map;
-          // console.log('Try changing cube', {
-          //   newCubeId,
-          //   newFacing: directionByIndex[newFacing],
-          // });
 
           pt = newMap.get(newPosition);
-          // console.log({ newPosition, pt });
         }
 
         if (pt !== '#') {
@@ -134,7 +122,6 @@ export function part2(input) {
           cubeId = newCubeId;
           map = cube.get(newCubeId).map;
         } else {
-          // console.log('Blocked');
           break;
         }
       }
@@ -142,9 +129,7 @@ export function part2(input) {
   }
 
   const toGlobal = cube.get(cubeId).toGlobal;
-  console.log('LOCAL', coords, cubeId);
   const [X, Y] = toGlobal(coords);
-  console.log('GLOBAL', [X, Y]);
 
   return Y * 1000 + 4 * X + facing;
 }
