@@ -1,72 +1,82 @@
-import { parse } from './core.js';
+import {
+  parse,
+  findAllDistances,
+  findPermutations,
+  computeFlow,
+} from './core.js';
 
 export function part1(input) {
-  const spots = parse(input);
+  const graph = parse(input);
 
-  const spotByPosition = {};
-  spots.forEach(spot => {
-    spotByPosition[spot.position] = spot;
-  });
+  const distanceMap = findAllDistances(graph);
 
-  const start = spots.find(spot => (spot.position = 'AA'));
-  let pressure = 0;
-  let ppm = 0;
-  let minutes = 30;
-  let current = start;
+  const perms = findPermutations(distanceMap);
+  let max = 0;
 
-  // const tree = new Map();
-  // const step = {
-  //   ...start,
-  //   path: start.position,
-  //   ppm: 0,
-  //   open: false,
-  //   released: 0,
-  //   minutes: 30,
-  // };
-  // tree.set(start.position, step);
-  // const queue = [step];
-  // let i = 0;
-  // while (i < 10000 && queue.filter(step => step.minutes > 0).length > 0) {
-  //   const current = queue.shift();
-  //   console.log('check', queue.filter(step => step.minutes > 0).length);
+  for (let i = 0; i < perms.length; i++) {
+    const perm = perms[i].split('-');
+    const score = computeFlow(perm, graph, distanceMap, 30);
 
-  //   let { options, ppm, released, minutes, rate, open, path } = current;
+    max = Math.max(max, score);
+  }
 
-  //   if (minutes === 0) {
-  //     continue;
-  //   }
-
-  //   if (rate > 0 && !open) {
-  //     released += ppm;
-  //     minutes--;
-  //     open = !open;
-  //     ppm += rate;
-  //   }
-
-  //   minutes--;
-
-  //   console.log('STEP', minutes);
-
-  //   options.forEach(option => {
-  //     const nextPath = `${path}-${option}`;
-  //     const spot = spotByPosition[option];
-
-  //     const step = { ...spot, path: nextPath, minutes, released, ppm, open };
-  //     tree.set(nextPath, step);
-  //     queue.push(step);
-  //   });
-  //   console.log('after', queue.length);
-  //   i++;
-  // }
-
-  // console.log('Queue', queue);
-  // console.log('Tree', tree);
-
-  return spots.length;
+  return max;
 }
 
 export function part2(input) {
-  const data = parse(input);
+  const graph = parse(input);
 
-  return data.length;
+  const distanceMap = findAllDistances(graph);
+
+  const keys = [...distanceMap.keys()].filter(k => k !== 'AA');
+
+  const length = Math.ceil(keys.length / 2);
+  const otherLength = keys.length - length;
+
+  // find all permutations of size 'length' that are possible in 26 minutes
+  const perms = findPermutations(distanceMap, {
+    left: 26,
+    size: length,
+  }).map(p => p.split('-'));
+  // find all permutations of size 'otherLength' that are possible in 26 minutes
+  const otherPerms = findPermutations(distanceMap, {
+    left: 26,
+    size: otherLength,
+  }).map(p => p.split('-'));
+
+  let max = 0;
+
+  for (let i = 0; i < perms.length; i++) {
+    const me = perms[i];
+
+    for (let j = 0; j < otherPerms.length; j++) {
+      const elephant = otherPerms[j];
+
+      let possible = true;
+
+      // check if couple is possible, meaning no spot is present in both permutations
+      for (let k = 0; k < elephant.length; k++) {
+        const spot = elephant[k];
+
+        if (me.includes(spot)) {
+          possible = false;
+          break;
+        }
+      }
+
+      if (possible) {
+        // if couple is possible, compute scores
+
+        // weird stuff here: using pts instead of pts.join('-').split('-') compute a different output
+        const _me = me.join('-').split('-');
+        const _elephant = elephant.join('-').split('-');
+
+        const myScore = computeFlow(_me, graph, distanceMap);
+        const elephantScore = computeFlow(_elephant, graph, distanceMap);
+        max = Math.max(max, myScore + elephantScore);
+      }
+    }
+  }
+
+  return max;
 }

@@ -14,7 +14,7 @@ describe('Day 16', () => {
     expect(part1(input)).toBe(1651);
   });
 
-  it.skip('Part 2', () => {
-    expect(part2(input)).toBe(56000011);
+  it('Part 2', () => {
+    expect(part2(input)).toBe(1707);
   });
 });
