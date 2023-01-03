@@ -1,15 +1,5 @@
 import { readFileSync } from 'fs';
 
-// function getRockHeight(rock) {
-//   const ys = new Set();
-
-//   rock.forEach(point => {
-//     const [_, y] = parsePosition(point);
-//     ys.add(y);
-//   });
-//   return ys.size;
-// }
-
 export function parse(input) {
   const rocks = readFileSync('./day17/rocks.txt')
     .toString()
@@ -25,13 +15,14 @@ export function parse(input) {
           line.split('').forEach((letter, x) => {
             if (letter === '#') {
               rock.push([x, y]);
-              // rock.push(`${x},${y}`);
             }
           });
         });
 
-      // return {layout: rock, height: getRockHeight(rock)};
-      return rock;
+      const allYs = rock.map(([x, y]) => y);
+      const height = Math.max(...allYs) - Math.min(...allYs);
+
+      return { shape: rock, height };
     });
 
   const moves = input.trim().split('');
@@ -69,29 +60,64 @@ export function play(rocks, moves, nbRocks) {
   let wallHeight = 0;
   let moveNb = 0;
 
-  const _nb = showMap ? 10 : nbRocks;
-  // while (nb < 2) {
+  let n = 0;
+  let h = 0;
+  let diffN = 0;
+  let diffH = 0;
+  let total = 0;
+  let cycle = new Set();
+  let foundNb;
+
   while (nb < nbRocks) {
-    // rock appears
+    // look for cycles in rock appearances and jet moves
     const rockNb = nb % rocks.length;
-    let rock = [...rocks[rockNb]];
+    if (!foundNb && rockNb === 0) {
+      if (!cycle.has(moveNb)) {
+        cycle.add(moveNb);
+      } else {
+        foundNb = moveNb;
+      }
+    }
+
+    // rock appears
     nb++;
-    if (nb % 100000 === 0) console.log(nb);
+    // initialize rock position
+    let x = deltaX;
+    let y = highest + deltaY;
+
+    /**
+     * Once a full cycle is found,
+     * compute height and number of rock for all remaining full cycles
+     * and let the rest of the rocks to be handled normally
+     */
+    if (diffN && diffH && diffN === nb - n && diffH === highest - h) {
+      const remaining = nbRocks - nb;
+      const steps = Math.floor(remaining / diffN);
+      nb += steps * diffN;
+      total = steps * diffH;
+    }
+
+    /**
+     * Find height and nb of rocks of one full cycle
+     * First cycle is going to be merged with first extra steps,
+     * so we need an extra cycle to make sure we have exactly one full cycle
+     */
+    if (rockNb === 0 && moveNb === foundNb) {
+      diffN = nb - n;
+      diffH = highest - h;
+      n = nb;
+      h = highest;
+    }
+
+    const { shape: rock, height } = rocks[rockNb];
 
     const extraHeight = yStart - highest <= 4 ? 4 : 0;
 
     wallHeight = yStart;
     yStart += extraHeight;
 
-    if (showMap) fillWalls(wallHeight + 1, wallHeight + extraHeight);
-
-    // initialize rock position
-    for (let i = 0; i < rock.length; i++) {
-      let [x, y] = rock[i];
-      x += deltaX;
-      y += deltaY + highest;
-
-      rock[i] = [x, y];
+    if (showMap) {
+      fillWalls(wallHeight + 1, wallHeight + extraHeight);
     }
 
     let next = false;
@@ -100,13 +126,12 @@ export function play(rocks, moves, nbRocks) {
       let dX = move;
       // Right / Left
       for (let i = 0; i < rock.length; i++) {
-        const [x, y] = rock[i];
+        const [xR, yR] = rock[i];
 
-        if (
-          x + move === 0 ||
-          x + move === 8 ||
-          blocked.has(`${x + move},${y}`)
-        ) {
+        const _x = x + xR + dX;
+        const _y = y + yR;
+
+        if (_x === 0 || _x === 8 || blocked.has(`${_x},${_y}`)) {
           dX = 0;
           break;
         }
@@ -115,45 +140,46 @@ export function play(rocks, moves, nbRocks) {
       let dY = -1;
       // Down
       for (let i = 0; i < rock.length; i++) {
-        const [x, y] = rock[i];
+        const [xR, yR] = rock[i];
+        const _x = x + xR + dX;
+        const _y = y + yR + dY;
 
-        if (y + dY === 0 || blocked.has(`${x + dX},${y + dY}`)) {
+        if (_y === 0 || blocked.has(`${_x},${_y}`)) {
           dY = 0;
           break;
         }
       }
 
       if (Math.abs(dX) + Math.abs(dY)) {
-        for (let i = 0; i < rock.length; i++) {
-          const [x, y] = rock[i];
-
-          rock[i] = [x + dX, y + dY];
-        }
+        x = x + dX;
+        y = y + dY;
       }
       moveNb = (moveNb + 1) % moves.length;
+
       if (dY === 0) {
         next = true;
+        highest = Math.max(highest, y + height);
         break;
       }
     }
 
-    // console.log('ROCK', rock);
-    highest = Math.max(highest, Math.max(...rock.map(([_, y]) => y)));
-
     // update map
     for (let i = 0; i < rock.length; i++) {
-      const [x, y] = rock[i];
-      blocked.add(`${x},${y}`);
-      map.set(`${x},${y}`, '#');
+      const [xR, yR] = rock[i];
+      const _x = x + xR;
+      const _y = y + yR;
+      blocked.add(`${_x},${_y}`);
+      if (showMap) {
+        map.set(`${_x},${_y}`, '#');
+      }
     }
-
-    if (showMap) {
+    if (showMap && nb <= 10) {
       const m = logMap(map, { height: yStart, width });
       console.log(m);
     }
   }
 
-  return highest;
+  return highest + total;
 }
 
 export function parsePosition(position) {
@@ -176,7 +202,6 @@ export function logMap(map, { height, width }) {
 
   [...map.entries()].forEach(([position, value]) => {
     const [x, y] = parsePosition(position);
-    // console.log({ x, y });
     list[y][x] = value;
   });
 
