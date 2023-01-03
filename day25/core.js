@@ -25,7 +25,6 @@ export function snafu(n) {
     i++;
   }
 
-  console.log({ i });
   let options = [2, 1, 0, -1, -2];
   let digits = Array.from({ length: i + 1 }, _ => 0);
   let current = digits.reduce(
